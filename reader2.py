@@ -5,8 +5,6 @@ import pickle
 import json
 from pathlib import Path
 
-brain = []
-
 
 class CheckFiles:
     def __init__(self, src=None, dst=None):
@@ -19,15 +17,22 @@ class CheckFiles:
         self.brain = []
 
     def file_exists(self):
-        if os.path.exists(self.src):
-            print("input file exists")
-        if os.path.exists(self.dst):
-            print("output file exists")
-        else:
-            print('No input or output file.Files in directory:')
-            directory = list(os.listdir())
-            print(directory)
+        if not os.path.exists(self.src):
+            print(f"Input file {src} not exists. Files in directory:")
+            dir = list(os.listdir())
+            print(dir)
             sys.exit()
+
+    """     def check_allowed_extensions(self):
+            check1 = Path(self.src)
+            if not check1.match("*.json") or check1.match("*.pickle") or check1.match("*.csv"):
+                print("Allowed extensions: .json, .pickle, .csv")
+                sys.exit()
+            check2 = Path(self.dst)
+            if not check2.match("*.json") or check2.match("*.pickle") or check2.match("*.csv"):
+                print("Allowed extensions: .json, .pickle and .csv")
+                sys.exit()
+    """
 
     def sysargv3read(self):
         for changes in sys.argv[3:]:
@@ -48,8 +53,7 @@ class CsvRead(CheckFiles):
 
 
 class CsvWrite(CheckFiles):
-    # def __init__(self):
-    # self.brain = []
+
     def write(self):
         with open(self.dst, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
@@ -60,22 +64,18 @@ class CsvWrite(CheckFiles):
 class PickleRead(CheckFiles):
 
     def read(self):
-# with open(self.src, "rb", newline="", encoding="utf-8") as file:
         with open(self.src, "rb") as file:
             self.brain = pickle.loads(file.read())
 
 
 class PickleWrite(CheckFiles):
 
-
     def write(self):
         with open(self.dst, "wb") as file:
-#       with open(self.dst, "wb", newline="", encoding="utf-8") as file:
             file.write(pickle.dumps(self.brain))
 
+
 class JsonRead(CheckFiles):
-# def __init__(self):
-# pass
 
     def read(self):
         with open(self.src, "r", newline="", encoding="utf-8") as file:
@@ -84,8 +84,6 @@ class JsonRead(CheckFiles):
 
 
 class JsonWrite(CheckFiles):
-# def __init__(self):
-# pass
 
     def write(self):
         with open(self.dst, "w", newline="", encoding="utf-8") as file:
@@ -114,7 +112,10 @@ if check.match("*.pickle") is True:
 class Change(reader, writer):
     pass
 
+
 obj = Change()
+obj.file_exists()
+#obj.check_allowed_extensions()
 obj.read()
 obj.sysargv3read()
 obj.write()
