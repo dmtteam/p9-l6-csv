@@ -32,8 +32,8 @@ class CheckFiles:
     def sysargv3read(self):
         for changes in sys.argv[3:]:
             par = changes.split(",")
-            row = int(par[0])
-            column = int(par[1])
+            row = int(par[0])-1
+            column = int(par[1])-1
             value = ",".join(par[2:])
             self.brain[row][column]=value
 
